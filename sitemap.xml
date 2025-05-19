@@ -2,17 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://goobersec.github.io/tags/first/</loc>
+    <lastmod>2025-05-18T23:33:19-04:00</lastmod>
+  </url><url>
     <loc>https://goobersec.github.io/posts/mypost/</loc>
     <lastmod>2025-05-18T23:33:19-04:00</lastmod>
   </url><url>
     <loc>https://goobersec.github.io/posts/</loc>
     <lastmod>2025-05-18T23:33:19-04:00</lastmod>
   </url><url>
+    <loc>https://goobersec.github.io/tags/</loc>
+    <lastmod>2025-05-18T23:33:19-04:00</lastmod>
+  </url><url>
     <loc>https://goobersec.github.io/</loc>
     <lastmod>2025-05-18T23:33:19-04:00</lastmod>
   </url><url>
-    <loc>https://goobersec.github.io/categories/</loc>
+    <loc>https://goobersec.github.io/tags/testing/</loc>
+    <lastmod>2025-05-18T23:33:19-04:00</lastmod>
   </url><url>
-    <loc>https://goobersec.github.io/tags/</loc>
+    <loc>https://goobersec.github.io/about/about/</loc>
+    <lastmod>2025-05-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://goobersec.github.io/about/</loc>
+    <lastmod>2025-05-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://goobersec.github.io/categories/</loc>
   </url>
 </urlset>
