@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Learning on Goobersec Blog</title>
+    <link>http://localhost:1313/tags/learning/</link>
+    <description>Recent content in Learning on Goobersec Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 19 May 2025 23:47:47 -0400</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/learning/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Examining Binaries With Gdb</title>
+      <link>http://localhost:1313/posts/examining-binaries-with-gdb/</link>
+      <pubDate>Mon, 19 May 2025 23:47:47 -0400</pubDate>
+      <guid>http://localhost:1313/posts/examining-binaries-with-gdb/</guid>
+      <description>We Have Binaries and Many Hours Recently, to begin my journey in exploit development, I&amp;rsquo;ve been honing skills I never thought I would revisit after failing my first programming class over a decade ago. To be fair, it was C++. I have been combing over lessons about memory, registers, binary, hex, and assembly. While these topics are not exactly fascinating, they are mandatory to know before entering the exploit development sphere.</description>
+    </item>
+  </channel>
+</rss>

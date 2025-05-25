@@ -2,22 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://goobersec.github.io/posts/examining-binaries-with-gdb/</loc>
+    <lastmod>2025-05-19T23:47:47-04:00</lastmod>
+  </url><url>
+    <loc>https://goobersec.github.io/tags/gdb/</loc>
+    <lastmod>2025-05-19T23:47:47-04:00</lastmod>
+  </url><url>
+    <loc>https://goobersec.github.io/</loc>
+    <lastmod>2025-05-19T23:47:47-04:00</lastmod>
+  </url><url>
+    <loc>https://goobersec.github.io/posts/</loc>
+    <lastmod>2025-05-19T23:47:47-04:00</lastmod>
+  </url><url>
+    <loc>https://goobersec.github.io/tags/rop/</loc>
+    <lastmod>2025-05-19T23:47:47-04:00</lastmod>
+  </url><url>
+    <loc>https://goobersec.github.io/tags/</loc>
+    <lastmod>2025-05-19T23:47:47-04:00</lastmod>
+  </url><url>
     <loc>https://goobersec.github.io/tags/first/</loc>
     <lastmod>2025-05-18T23:33:19-04:00</lastmod>
   </url><url>
-    <loc>https://goobersec.github.io/posts/mypost/</loc>
-    <lastmod>2025-05-18T23:33:19-04:00</lastmod>
-  </url><url>
-    <loc>https://goobersec.github.io/posts/</loc>
-    <lastmod>2025-05-18T23:33:19-04:00</lastmod>
-  </url><url>
-    <loc>https://goobersec.github.io/tags/</loc>
-    <lastmod>2025-05-18T23:33:19-04:00</lastmod>
-  </url><url>
-    <loc>https://goobersec.github.io/</loc>
-    <lastmod>2025-05-18T23:33:19-04:00</lastmod>
-  </url><url>
     <loc>https://goobersec.github.io/tags/testing/</loc>
+    <lastmod>2025-05-18T23:33:19-04:00</lastmod>
+  </url><url>
+    <loc>https://goobersec.github.io/posts/mypost/</loc>
     <lastmod>2025-05-18T23:33:19-04:00</lastmod>
   </url><url>
     <loc>https://goobersec.github.io/about/about/</loc>

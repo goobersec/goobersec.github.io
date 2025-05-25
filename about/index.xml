@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Abouts on Terminal</title>
+    <title>Abouts on Goobersec Blog</title>
     <link>https://goobersec.github.io/about/</link>
-    <description>Recent content in Abouts on Terminal</description>
+    <description>Recent content in Abouts on Goobersec Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 18 May 2025 00:00:00 +0000</lastBuildDate>
@@ -13,7 +13,7 @@
       <link>https://goobersec.github.io/about/about/</link>
       <pubDate>Sun, 18 May 2025 00:00:00 +0000</pubDate>
       <guid>https://goobersec.github.io/about/about/</guid>
-      <description>Content is here. In Markdown.&#xA;-test -test -test&#xA;c is really cool&#xA;Source?&#xA;I made it up </description>
+      <description>What is this blog for? The purpose of this blog is to document things that I consider important while learning/doing things related to binary exploitation, hardware security, and exploit development. I am currently a SOC analyst, but aspire to either enter the field of exploit development/red teaming. Feel free to use any of the information here to help you understand these concepts, and hopefully I can get a CVE or two along the way ;)</description>
     </item>
   </channel>
 </rss>

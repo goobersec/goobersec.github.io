@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Goobersec Blog</title>
-    <link>https://goobersec.github.io/posts/</link>
-    <description>Recent content in Posts on Goobersec Blog</description>
+    <title>ROP on Goobersec Blog</title>
+    <link>https://goobersec.github.io/tags/rop/</link>
+    <description>Recent content in ROP on Goobersec Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Mon, 19 May 2025 23:47:47 -0400</lastBuildDate>
-    <atom:link href="https://goobersec.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://goobersec.github.io/tags/rop/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Examining Binaries With Gdb</title>
       <link>https://goobersec.github.io/posts/examining-binaries-with-gdb/</link>
       <pubDate>Mon, 19 May 2025 23:47:47 -0400</pubDate>
       <guid>https://goobersec.github.io/posts/examining-binaries-with-gdb/</guid>
       <description>Backstory Recently, to begin my journey in exploit development, I&amp;rsquo;ve been honing skills I never thought I would revisit after failing my first programming class over a decade ago. To be fair, it was C++. I have been combing over lessons about memory, registers, binary, hex, and assembly. While these topics are not exactly fascinating, they are mandatory to know before entering the exploit development sphere.&#xA;I am a member of a cybersecurity community known as Elevate Cyber, and one of the workshops that the creator, Ryan, has made is focused on low-level computing.</description>
-    </item>
-    <item>
-      <title>Welcome to Goobersec Security Blog</title>
-      <link>https://goobersec.github.io/posts/mypost/</link>
-      <pubDate>Sun, 18 May 2025 23:33:19 -0400</pubDate>
-      <guid>https://goobersec.github.io/posts/mypost/</guid>
-      <description>This is my first post Welcome. If you like this theme, here&amp;rsquo;s what some of the flavors of markdown look like:&#xA;welcome&#xA;welcome&#xA;welcome W E L C O M E 💡 Welcome&#xA;Want a nice shell on Linux Mint? Install Zsh Install Oh My Zsh Add syntax highlighting Set up Powerlevel10k </description>
     </item>
   </channel>
 </rss>

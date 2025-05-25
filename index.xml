@@ -1,26 +1,33 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Terminal</title>
+    <title>Goobersec Blog</title>
     <link>https://goobersec.github.io/</link>
-    <description>Recent content on Terminal</description>
+    <description>Recent content on Goobersec Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 18 May 2025 23:33:19 -0400</lastBuildDate>
+    <lastBuildDate>Mon, 19 May 2025 23:47:47 -0400</lastBuildDate>
     <atom:link href="https://goobersec.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>First Post</title>
+      <title>Examining Binaries With Gdb</title>
+      <link>https://goobersec.github.io/posts/examining-binaries-with-gdb/</link>
+      <pubDate>Mon, 19 May 2025 23:47:47 -0400</pubDate>
+      <guid>https://goobersec.github.io/posts/examining-binaries-with-gdb/</guid>
+      <description>Backstory Recently, to begin my journey in exploit development, I&amp;rsquo;ve been honing skills I never thought I would revisit after failing my first programming class over a decade ago. To be fair, it was C++. I have been combing over lessons about memory, registers, binary, hex, and assembly. While these topics are not exactly fascinating, they are mandatory to know before entering the exploit development sphere.&#xA;I am a member of a cybersecurity community known as Elevate Cyber, and one of the workshops that the creator, Ryan, has made is focused on low-level computing.</description>
+    </item>
+    <item>
+      <title>Welcome to Goobersec Security Blog</title>
       <link>https://goobersec.github.io/posts/mypost/</link>
       <pubDate>Sun, 18 May 2025 23:33:19 -0400</pubDate>
       <guid>https://goobersec.github.io/posts/mypost/</guid>
-      <description>Testing this post Welcome&#xA;welcome&#xA;welcome&#xA;welcome </description>
+      <description>This is my first post Welcome. If you like this theme, here&amp;rsquo;s what some of the flavors of markdown look like:&#xA;welcome&#xA;welcome&#xA;welcome W E L C O M E 💡 Welcome&#xA;Want a nice shell on Linux Mint? Install Zsh Install Oh My Zsh Add syntax highlighting Set up Powerlevel10k </description>
     </item>
     <item>
       <title>About</title>
       <link>https://goobersec.github.io/about/about/</link>
       <pubDate>Sun, 18 May 2025 00:00:00 +0000</pubDate>
       <guid>https://goobersec.github.io/about/about/</guid>
-      <description>Content is here. In Markdown.&#xA;-test -test -test&#xA;c is really cool&#xA;Source?&#xA;I made it up </description>
+      <description>What is this blog for? The purpose of this blog is to document things that I consider important while learning/doing things related to binary exploitation, hardware security, and exploit development. I am currently a SOC analyst, but aspire to either enter the field of exploit development/red teaming. Feel free to use any of the information here to help you understand these concepts, and hopefully I can get a CVE or two along the way ;)</description>
     </item>
   </channel>
 </rss>
