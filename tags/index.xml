@@ -6,8 +6,29 @@
     <description>Recent content in Tags on Goobersec Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 19 May 2025 23:47:47 -0400</lastBuildDate>
+    <lastBuildDate>Wed, 28 May 2025 18:07:44 -0400</lastBuildDate>
     <atom:link href="https://goobersec.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Buffer Overflow</title>
+      <link>https://goobersec.github.io/tags/buffer-overflow/</link>
+      <pubDate>Wed, 28 May 2025 18:07:44 -0400</pubDate>
+      <guid>https://goobersec.github.io/tags/buffer-overflow/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>WinDbg</title>
+      <link>https://goobersec.github.io/tags/windbg/</link>
+      <pubDate>Wed, 28 May 2025 18:07:44 -0400</pubDate>
+      <guid>https://goobersec.github.io/tags/windbg/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Windows</title>
+      <link>https://goobersec.github.io/tags/windows/</link>
+      <pubDate>Wed, 28 May 2025 18:07:44 -0400</pubDate>
+      <guid>https://goobersec.github.io/tags/windows/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Gdb</title>
       <link>https://goobersec.github.io/tags/gdb/</link>

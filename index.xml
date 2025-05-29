@@ -6,8 +6,15 @@
     <description>Recent content on Goobersec Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 19 May 2025 23:47:47 -0400</lastBuildDate>
+    <lastBuildDate>Wed, 28 May 2025 18:07:44 -0400</lastBuildDate>
     <atom:link href="https://goobersec.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exploiting Stack-Based Buffer Overflows on x86_64 Windows with Unstripped Binaries</title>
+      <link>https://goobersec.github.io/posts/stack-based-buffer-overflow-on-windows/</link>
+      <pubDate>Wed, 28 May 2025 18:07:44 -0400</pubDate>
+      <guid>https://goobersec.github.io/posts/stack-based-buffer-overflow-on-windows/</guid>
+      <description>Outline In my previous post, I examined identifying a buffer overflow in a Linux binary. This time, I will be looking at a Windows executable that was provided to me as part of a low-level computing workshop. The goals of this exercise are to walk through the entire process of exploit development, from discovery to exploitation. I will:&#xA;Analyze a Windows binary using both static and dynamic debugging tools Identify vulnerable functions and understand how they fail Observe normal vs.</description>
+    </item>
     <item>
       <title>Examining Binaries With Gdb</title>
       <link>https://goobersec.github.io/posts/examining-binaries-with-gdb/</link>
